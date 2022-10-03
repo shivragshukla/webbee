@@ -37,7 +37,44 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('movies', function($table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('shows', function($table) {
+            $table->increments('id');
+            $table->string('location');
+            $table->double('price', 8, 2);
+            $table->dateTime('start');
+            $table->dateTime('end');
+            $table->boolean('booked')->default(false);
+            $table->integer('movie_id')->unsigned();
+            $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('seats', function($table) {
+            $table->increments('id');
+            $table->enum('type', ['vip', 'couple', 'super_vip', 'normal']);
+            $table->integer('seat_no');
+            $table->timestamps();
+        });
+
+        Schema::create('show_user', function($table) {
+            $table->increments('id');
+            $table->boolean('confirmed')->default(false);
+            $table->integer('show_id')->unsigned();
+            $table->integer('seat_id')->unsigned();
+            $table->integer('user_id')->unsigned();
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('cascade');
+            $table->foreign('seat_id')->references('id')->on('seats')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('uers')->onDelete('cascade');
+            $table->timestamps();
+        });
+
     }
 
     /**
